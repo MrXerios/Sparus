@@ -1,0 +1,44 @@
+#!/bin/bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR
+
+# Creation du fichier d'emplois du temps schedule file
+touch schedule.txt
+
+# Synchronisation avec le maître
+MASTER_TIME=$(./txrx_once receive)
+START_SYNC=$(date +%s.%N)
+./txrx_once send TOP &
+./txrx_once receive
+END_SYNC=$(date +%s.%N)
+
+# Temps de propagation entre le maître et l'esclave
+AIR_TIME=$($(( (START_SYNC - END_SYNC) / 3)) | bc -l )
+
+# Temps réel par rapport au maître
+NEW_TIME=$( $(( MASTER_TIME + ($(date +%s.%N) - START_SYNC) - AIR_TIME)) | bc -l)
+date +%S.N -s @$NEW_TIME
+
+while [ 1 ]
+do
+	./dragino_lora_app receiver 
+	./play_schedule
+	if [ $((TIME_LAST_SYNC + SYNC_CLOCk)) -lt $(date -d 'now' +%s) ]
+	then
+		# Synchronisation avec le maître
+		MASTER_TIME=$(./txrx_once receive)
+		START_SYNC=$(date +%s.%N)
+		./txrx_once send TOP &
+		./txrx_once receive
+		END_SYNC=$(date +%s.%N)
+
+		# Temps de propagation entre le maître et l'esclave
+		AIR_TIME=$($(( (START_SYNC - END_SYNC) / 2)) | bc -l )
+
+		# Temps réel par rapport au maître
+		NEW_TIME=$( $(( MASTER_TIME + ($(date +%s.%N) - START_SYNC) - AIR_TIME)) | bc ->
+		date +%S.N -s @$NEW_TIME
+		TIME_LAST_SYNC=$(date -d 'now' +%s)
+	fi
+done

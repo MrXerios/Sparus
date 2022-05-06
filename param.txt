@@ -1,0 +1,4 @@
+silence : 10 15
+duration : 60
+timeout :  10
+sync : 84600

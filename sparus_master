@@ -1,0 +1,40 @@
+#!/bin/bash
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR
+
+# Synchronisation au GPS
+SYNC_CLOCK=$(grep -Eo '[0-9]{1,10}' param.txt | head -5 | tail -1)
+TIME_LAST_SYNC=$(date -d 'now' +%s)
+./synchro_clock_to_gps
+
+#Synchronisation des esclaves
+START_TIME=$(date +%s.%N)
+./txrx_once send $START_TIME &
+./txrx_once receive
+./txrx_once send TOP
+
+
+while [ 1 ]
+do
+	# Creation de l'emplois du temps
+	./generate_schedule
+	sleep 2
+
+	# Envois de l'emplois du temps
+	./txrx_schedule sender schedule.txt
+
+	# Jouer l'emplois du temps
+	./play_schedule
+
+	# Synchronisation si le délais précisé en paramètre est dépassé
+	if [ $((TIME_LAST_SYNC + SYNC_CLOCk)) -lt $(date -d 'now' +%s) ]
+	then
+		./synchro_clock_to_gps
+		TIME_LAST_SYNC=$(date -d 'now' +%s)
+
+		START_TIME=$(date +%s.%N)
+		./txrx_once send $START_TIME &
+		./txrx_once receive
+		./txrx_once send TOP
+	fi
+done

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+TIMEOUT_SOUND=$(grep -Eo '[0-9]{1,10}' param.txt | head -4 | tail -1)
+
+## While schedule is not empty --> there are still scheduled plays
+while [ -s schedule.txt ]
+do
+    ## Get timestamp and id of next play
+    TIMESTAMP_NEXT=$(head -1 schedule.txt | grep -Eo '[0-9]{1,10}' | head -1)
+    SOUND_NEXT=$(head -1 schedule.txt | grep -Eo '[0-9]{1,10}' | tail -1)
+
+    ## Get sound that will be played
+    MUSIC_TO_PLAY=$(ls ./audio | head -$SOUND_NEXT | tail -1)
+
+    ## Sleep for the required time, down to nanosecond precision (effectively more like millisecond)
+    TIMESTAMP_CURRENT=$(date +%s.%N)
+    SLEEP_TIME=$(echo "$TIMESTAMP_NEXT - $TIMESTAMP_CURRENT"|bc)
+
+    # Checks if the target time is in the futur
+    if (( $(echo "$SLEEP_TIME > 0.0" |bc -l) ))
+    then
+        sleep $SLEEP_TIME
+        # echo $MUSIC_TO_PLAY is now playing for $TIMEOUT_SOUND sec
+	sudo -u pi timeout $TIMEOUT_SOUND ffplay -nodisp -autoexit "./audio/$MUSIC_TO_PLAY"
+    fi
+
+    ## Remove first line of schedule.txt
+    tail -n +2 schedule.txt > schedule.tmp && mv schedule.tmp schedule.txt
+
+done
+
+# At the end, the schedule is empty 

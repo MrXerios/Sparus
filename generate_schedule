@@ -1,0 +1,35 @@
+#!/bin/bash
+
+## Supprimer l'ancien emploi du temps, juste au cas où
+rm -f schedule.txt
+
+
+## Récupérer les paramètres du script dans le fichier param.txt
+MIN_SILENCE=$(grep -Eo '[0-9]{1,10}' param.txt | head -1 | tail -1)
+MAX_SILENCE=$(grep -Eo '[0-9]{1,10}' param.txt | head -2 | tail -1)
+SCHEDULE_DURATION=$(grep -Eo '[0-9]{1,10}' param.txt | head -3 | tail -1)
+TIMEOUT=$(grep -Eo '[0-9]{1,10}' param.txt | head -4 | tail -1)
+
+# Calcule le nombre de fichiers audio disponibles
+NB_AUDIO=$(ls ./audio | wc -l)
+
+## Déterminer les temps de début et de fin de l'emplois du temps
+TIMESTAMP_START=$(date -d 'now' +%s)
+TIMESTAMP=$TIMESTAMP_START
+TIMESTAMP_STOP=$(expr $TIMESTAMP_START + $SCHEDULE_DURATION)
+
+## Tant que TIMESTAMP < TIMESTAMP_STOP 
+while [ "$TIMESTAMP" -lt "$TIMESTAMP_STOP" ]
+do
+
+    ## Durée du silence aléatoire entre MIN_SILENCE et MAX_SILENCE
+    NEXT_SILENCE=$(( $(($RANDOM % $(($MAX_SILENCE - $MIN_SILENCE)))) + $MIN_SILENCE))
+    TIMESTAMP=$(($TIMESTAMP + $NEXT_SILENCE + $TIMEOUT))
+
+    ## Détermine aléatoirement quel son sera joué
+    SOUND=$(( $(($RANDOM % $NB_AUDIO)) + 1))
+    
+    ## Planifier le prochain son
+    echo $TIMESTAMP $SOUND >> schedule.txt
+
+done
