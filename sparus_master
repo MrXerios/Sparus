@@ -9,9 +9,9 @@ TIME_LAST_SYNC=$(date -d 'now' +%s)
 
 #Synchronisation des esclaves
 START_TIME=$(date +%s.%N)
-./txrx_once send $START_TIME &
-./txrx_once receive
-./txrx_once send TOP
+./txrx_once sender $START_TIME &
+./txrx_once receiver
+./txrx_once sender TOP
 
 
 while [ 1 ]
