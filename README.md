@@ -225,17 +225,17 @@ dtparam=spi=on
 
 dtoverlay=pi3-disable-bt-overlay
 
-core\_freq=250
+core_freq=250
 
-enable\_uart=1
+enable_uart=1
 
-force\_turbo=1
+force_turbo=1
 ```
 Dans Le fichier ```/boot/config.txt``` (```sudo nano /boot/config.txt```). Puis
 éditer le fichier ```/boot/cmdline.txt``` (```sudo nano /boot/cmdline.txt```)
 et remplacer l'ensemble de son contenu par :
 ```
-dwc\_otg.lpm\_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4
+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4
 elevator=deadline fsck.repair=yes rootwait
 ```
 Sauver et quitter. Afin de désactiver le système Bluetooth par défaut
@@ -322,15 +322,15 @@ configuration de gpsd (sudo nano /etc/default/gpsd) et remplaçant
 l'ensemble du fichier par :
 
 ```
-START\_DAEMON=\"true\"
+START_DAEMON="true"
 
-GPSD\_OPTIONS=\"-n\"
+GPSD_OPTIONS="-n"
 
-DEVICES=\"/dev/ttyS0\"
+DEVICES="/dev/ttyS0"
 
-USBAUTO=\"false\"
+USBAUTO="false"
 
-GPSD\_SOCKET=\"/var/run/gpsd.sock\"
+GPSD_SOCKET="/var/run/gpsd.sock"
 ```
 
 ####3.2 -- Installation de LoRa
@@ -385,7 +385,7 @@ rm master
 On peut alors procéder à l'installation de ces programmes.
 
 ```
-cd rpi-lora-tranceiver-master/dragino\_lora\_app
+cd rpi-lora-tranceiver-master/dragino_lora_app
 
 make
 ```
@@ -396,16 +396,16 @@ raspberry PI configurées de la même manière, on peut exécuter sur l'une
 le programme obtenu en la configurant en émetteur :
 
 ```
-cd \~/rpi-lora-tranceiver-master/dragino\_lora\_app
+cd ~/rpi-lora-tranceiver-master/dragino_lora_app
 
-./dragino\_lora\_app sender
+./dragino_lora_app sender
 ```
 
 Cette carte envoi alors toute les 5 secondes le message « HELLO ». On
 peut alors configurer l'autre carte en récepteur :
 
 ```
-cd \~/rpi-lora-tranceiver-master/dragino\_lora\_app
+cd ~/rpi-lora-tranceiver-master/dragino_lora_app
 
 ./dragino\_lora\_app receiver
 ```
@@ -457,9 +457,9 @@ programmes. Pour cela, il faut :
 -   Brancher un amplificateur et un haut-parleur adapté à la sortie
     audio du HAT Hifiberry
 -   Télécharger les fichiers audios à lire dans le dossier
-    ```\~/sparus/audio ``` de chaque raspberry PI
+    ```~/sparus/audio ``` de chaque raspberry PI
 -   Modifier les paramètres de génération de l'emploi du temps dans le
-    fichier de paramètres (```nano \~/sparus/param.txt```) de la raspberry
+    fichier de paramètres (```nano ~/sparus/param.txt```) de la raspberry
     maître :
 
     -   silence (2 valeurs) : durées minimale et maximale en seconde
@@ -477,11 +477,11 @@ Enfin, on peut lancer les programmes adaptés sur chaque carte. Commencer
 par utiliser la commande suivante sur toutes les raspberry PI esclave.
 
 ```
-sudo \~/sparus/sparus\_slave
+sudo ~/sparus/sparus_slave
 ```
 Enfin lancer la commande suivante sur la raspberry PI maître.
 ```
-sudo \~/sparus/sparus\_master
+sudo ~/sparus/sparus_master
 ```
 
 Il est également possible de paramètrer la raspberry pour que ces scripts 
