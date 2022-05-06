@@ -1,6 +1,6 @@
 # Projet de synchronisation de macro-ordinateurs en mer
 
-##I -- Introduction
+I -- Introduction
 ============================
 
 L'objectif de ce projet est de créer []{#anchor-1}le prototype
@@ -10,10 +10,10 @@ leurs prédateurs. Ainsi, on veut synchroniser des nano-ordinateurs
 situés à 500m maximum les uns des autres et à 4km maximum des côtes,
 pour qu'ils jouent le même son simultanément.
 
-##II -- Principe
+II -- Principe
 ===========================
 
-###1) Architecture de la flotte
+1) Architecture de la flotte
 -----------------------------------------
 
 Pour ce projet, on dispose d'une flotte de nano-ordinateurs dont l'un
@@ -32,7 +32,7 @@ Le rôle des esclaves sera de :
 -   recevoir l'emploi du temps transmis par le maître,
 -   jouer l'emploi du temps reçu.
 
-###2) Choix techniques
+2) Choix techniques
 --------------------------------
 
 Étant donné le cahier des charges, on fait le choix d'utiliser le
