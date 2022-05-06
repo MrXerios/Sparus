@@ -478,8 +478,21 @@ par utiliser la commande suivante sur toutes les raspberry PI esclave.
 
 ```
 sudo \~/sparus/sparus\_slave
-
+```
 Enfin lancer la commande suivante sur la raspberry PI maître.
-
+```
 sudo \~/sparus/sparus\_master
 ```
+
+Il est également possible de paramètrer la raspberry pour que ces scripts 
+soient exécutés au démarrage. Pour cela, utiliser la commande 
+```crontab -e``` et on ajouter la ligne suivante au fichier texte qui s'ouvre :
+
+```
+@reboot /home/pi/sparus_master
+```
+ou
+```
+@reboot /home/pi/sparus_slave
+```
+Il faut alors allumer tous les esclaves avant d'allumer la raspberry maître.
