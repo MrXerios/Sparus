@@ -27,10 +27,10 @@ do
 	if [ $((TIME_LAST_SYNC + SYNC_CLOCk)) -lt $(date -d 'now' +%s) ]
 	then
 		# Synchronisation avec le maître
-		MASTER_TIME=$(./txrx_once receive)
+		MASTER_TIME=$(./txrx_once receiver)
 		START_SYNC=$(date +%s.%N)
-		./txrx_once send TOP &
-		./txrx_once receive
+		./txrx_once sender TOP &
+		./txrx_once receiver
 		END_SYNC=$(date +%s.%N)
 
 		# Temps de propagation entre le maître et l'esclave
