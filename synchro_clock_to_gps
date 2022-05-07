@@ -1,10 +1,5 @@
 #!/bin/bash
 
-pkill ntpd &&
-pkill gpsd
-gpsd /dev/ttyS0 -F /var/run/gpsd.sock
-sleep 2
 GPSDATE=`gpspipe -w | head -10 | grep TPV | sed -r 's/.*"time":"([^"]*)".*/\1/' | head -1`
 echo $GPSDATE
 date -s "$GPSDATE"
-killall gpsd

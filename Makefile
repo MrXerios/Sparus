@@ -20,4 +20,4 @@ main.o: main.c
 	$(CC) $(CFLAGS) main.c
 
 clean:
-	rm *.o txrx_*
+	rm *.o txrx_* schedule.txt
