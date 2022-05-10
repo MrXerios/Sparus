@@ -429,7 +429,7 @@ cd
 
 git clone https://github.com/MrXerios/Sparus
 
-cd sparus/
+cd Sparus/
 
 make
 ```
@@ -457,9 +457,9 @@ programmes. Pour cela, il faut :
 -   Brancher un amplificateur et un haut-parleur adapté à la sortie
     audio du HAT Hifiberry
 -   Télécharger les fichiers audios à lire dans le dossier
-    ```~/sparus/audio ``` de chaque raspberry PI
+    ```~/Sparus/audio ``` de chaque raspberry PI
 -   Modifier les paramètres de génération de l'emploi du temps dans le
-    fichier de paramètres (```nano ~/sparus/param.txt```) de la raspberry
+    fichier de paramètres (```nano ~/Sparus/param.txt```) de la raspberry
     maître :
 
     -   silence (2 valeurs) : durées minimale et maximale en seconde
@@ -477,22 +477,22 @@ Enfin, on peut lancer les programmes adaptés sur chaque carte. Commencer
 par utiliser la commande suivante sur toutes les raspberry PI esclave.
 
 ```
-sudo ~/sparus/sparus_slave
+sudo ~/Sparus/sparus_slave
 ```
 Enfin lancer la commande suivante sur la raspberry PI maître.
 ```
-sudo ~/sparus/sparus_master
+sudo ~/Sparus/sparus_master
 ```
 
 Il est également possible de paramètrer la raspberry pour que ces scripts 
 soient exécutés au démarrage. Pour cela, utiliser la commande 
-```crontab -e``` et on ajouter la ligne suivante au fichier texte qui s'ouvre :
+``` sudo crontab -e``` et on ajouter la ligne suivante au fichier texte qui s'ouvre :
 
 ```
-@reboot /home/pi/sparus_master
+@reboot /home/pi/Sparus/sparus_master
 ```
 ou
 ```
-@reboot /home/pi/sparus_slave
+@reboot /home/pi/Sparus/sparus_slave
 ```
 Il faut alors allumer tous les esclaves avant d'allumer la raspberry maître.
