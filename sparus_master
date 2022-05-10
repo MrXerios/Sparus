@@ -1,19 +1,21 @@
 #!/bin/bash
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
 # Synchronisation au GPS
 SYNC_CLOCK=$(grep -Eo '[0-9]{1,10}' param.txt | head -5 | tail -1)
 TIME_LAST_SYNC=$(date -d 'now' +%s)
-gpsd /dev/ttyS0 -F /var/run/gpsd.sock
 ./synchro_clock_to_gps
 
 #Synchronisation des esclaves
-START_TIME=$(date +%s.%N)
-./txrx_once sender $START_TIME &
-./txrx_once receiver
-./txrx_once sender TOP
+#START_TIME=$(date +%s.%N)
+#./txrx_once sender $START_TIME
+#./txrx_once receiver
+#sleep 5
+#./txrx_once sender TOP
 
+sleep 10
 
 while [ 1 ]
 do
