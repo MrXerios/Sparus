@@ -1,6 +1,6 @@
-# Projet de synchronisation de macro-ordinateurs en mer
+# **Projet de synchronisation de nano-ordinateurs en mer**
 
-##I -- Introduction
+## I -- Introduction
 ============================
 
 L'objectif de ce projet est de créer le prototype
@@ -10,10 +10,10 @@ leurs prédateurs. Ainsi, on veut synchroniser des nano-ordinateurs
 situés à 500m maximum les uns des autres et à 4km maximum des côtes,
 pour qu'ils jouent le même son simultanément.
 
-##II -- Principe
+## II -- Principe
 ===========================
 
-###1) Architecture de la flotte
+### 1) Architecture de la flotte
 -----------------------------------------
 
 Pour ce projet, on dispose d'une flotte de nano-ordinateurs dont l'un
@@ -32,7 +32,7 @@ Le rôle des esclaves sera de :
 -   recevoir l'emploi du temps transmis par le maître,
 -   jouer l'emploi du temps reçu.
 
-###2) Choix techniques
+### 2) Choix techniques
 --------------------------------
 
 Étant donné le cahier des charges, on fait le choix d'utiliser le
@@ -48,10 +48,10 @@ amplifié et transmis à un haut-parleur, mais ceci sort du cadre du
 projet.
 
 Enfin, on utilise les signaux GPS afin de contrecarrer la dérives des
-horloges internes des nano-ordinateurs, puisqu'elles doivent fonctionner
+horloges internes des nano-ordinateurs, puisqu'ils doivent fonctionner
 en autonomie.
 
-##III -- Matériel
+## III -- Matériel
 ============================
 
 Dans la suite de ce document, le processus d'installation est décrit
@@ -59,11 +59,11 @@ pour le matériel suivant :
 
 Pour chaque élément de la flotte :
 
--   une carte Raspberry PI 3b ou 2b+,
+-   une carte Raspberry PI 3b ou 3b+,
 -   une carte micro-SD (minimum 8GB),
 -   un HAT Hifiberry DAC+,
 -   un HAT Dragino LoRa/GPS v1.4,
--   Un méthode permettant d'accéder à la raspberry Pi, soit :
+-   Une méthode permettant d'accéder à la raspberry Pi, soit :
 
     -   un ordinateur personnel connecté à internet,
     -   ou un clavier et un écran qui puissent être connectés au
@@ -72,19 +72,19 @@ Pour chaque élément de la flotte :
 -   Un câble Ethernet RJ45
 
 Ces éléments peuvent être substitués par des composants équivalents si
-besoin, mais les instructions pour l'installation devront alors être
+besoin, mais les instructions pour l'installation doivent alors être
 adaptées.
 
-##IV -- Instructions d'installation
-=================================
+## IV -- Instructions d'installation
+==============================================
 
 Les instructions suivantes ont été testées pour des raspberry PI 3b et
 3b+, et pour Raspberry PI OS 11 (bullseye). Il peut être nécessaire
 d'adapter ces instructions pour d'autres modèles de raspberry ou pour
 d'autres versions de l'OS.
 
-###1) Installation de Raspberry PI OS sur la raspberry PI
-------------------------------------------------------
+### 1) Installation de Raspberry PI OS sur la raspberry PI
+-------------------------------------------------------------------
 
 Pour commencer, il est nécessaire d'installer un système d'exploitation
 (OS : Operating System) sur le nano-ordinateur. On va utiliser Raspberry
@@ -109,6 +109,15 @@ Si on souhaite accéder à la carte depuis un ordinateur personnel,
 ajouter un fichier texte vide appelé « ssh » (et non pas « ssh.txt ») au
 dossier boot de la carte SD. Ceci active le protocole ssh.
 
+**Note du 10 / 05 / 22 : Cette étape semble poser problème avec la
+version actuelle de PI Imager, il n'est pas possible de se connecter
+directement via ssh à la carte après avoir installé l'OS. La seule façon
+connue de corriger ce problème est de se connecter au terminal de la
+carte avec un écran et un clavier, d'activer le ssh (sudo raspi-config
+\> interface options \> ssh \> enable), puis de changer le mot de passe
+par défaut pour tout les utilisateurs : (```sudo passwd pi``` &
+```sudo passwd root```).**
+
 La carte SD est alors prête. On peut la déconnecter de l'ordinateur et
 l'introduire dans le port micro-SD de la raspberry PI. Il devrait être
 possible d'accéder au terminal de la raspberry Pi après quelques minutes
@@ -116,20 +125,24 @@ une fois celle-ci branchée. L'identifiant par défaut est « pi » et le
 mot de passe est « raspberry ». **Il est fortement recommandé de changer
 ces paramètres lors de la 1ère connexion à la carte.**
 
-###2) Installation du HAT Hifiberry DAC+
+### 2) Installation du HAT Hifiberry DAC+
 --------------------------------------------------
 
 Nous allons maintenant procéder à l'installation du HAT Hifiberry DAC+.
 La première étape est de connecter le HAT à la carte en insérant les 40
 broches dans les 40 ports de la carte.
 
+![Figure 5: HAT Hifiberry connecté à une carte raspberry PI
+3](Pictures/10000201000001F00000014B4E9B2A703750E2B1.png){width="13.123cm"
+height="8.758cm"}
+
 On commence par déconnecter le driver son par défaut de la raspberry PI
 en retirant les lignes :
-```
-dtparam=audio=on
 
-dtoverlay=vc4-fkms-v3d
-```
+```dtparam=audio=on```
+
+```dtoverlay=vc4-fkms-v3d```
+
 du fichier ```/boot/config.txt``` ( en utilisant la commande ```sudo nano
 /boot/config.txt``` par exemple).
 
@@ -170,7 +183,7 @@ driver de la carte Hifiberry.
 
     ```dtoverlay=hifiberry-amp```
 
-Enfin, ajouter la ligne *force\_eeprom\_read=0 *à ce même fichier. Cette
+Enfin, ajouter la ligne ```force_eeprom_read=0 ``` à ce même fichier. Cette
 ligne permet d'éviter certaines incompatibilités entre les dernières
 versions de linux et les données enregistrées dans la mémoire interne du
 HAT. Sauvegarder et quitter le fichier pour retourner dans la console
@@ -181,24 +194,28 @@ Créer ensuite le fichier ```/etc/asound.conf``` (commande ```sudo nano
 afin de sélectionner les cartes sons à utiliser. Ici Hifiberry devrait
 correspondre au 0.
 
+```
 defaults.pcm.card 0
 
 defaults.pcm.device 0
 
 defaults.ctl.card 0
+```
 
 Sauvegarder et quitter le fichier, puis redémarrer la carte (```sudo
 reboot```). Après redémarrage, il devrait être possible de connecter des
 hauts-parleurs à la carte et de jouer des sons dessus. Pour tester ceci,
 on peut utiliser la commande :
 
-```aplay -l```
+```
+aplay -l
+```
 
 Cette commande liste toutes les cartes sons disponibles. La seule entrée
 visible devrait être le HAT Hifiberry. Il est ensuite possible de tester
 la sortie audio avec la commande ```speaker-test -t wav -c 6```.
 
-###3) Installation du HAT Dragino LoRa/GPS
+### 3) Installation du HAT Dragino LoRa/GPS
 ----------------------------------------------------
 
 Nous allons maintenant installer le HAT Dragino LoRa/GPS. Il faut tout
@@ -207,19 +224,29 @@ souder un connecteur 40 ports sur le HAT Hifiberry. Il n'est pas
 recommandé d'installer le HATHifiberry au dessus du HAT GPS/LoRa puisque
 le GPS a besoin d'être en vue directe du ciel.
 
-Il est à noter qu'une antenne adaptées est nécessaire
-pour LoRa (antenne 868,1 MHz), mais pas pour le GPS. En effet, la puce
-GPS dispose d'un réseau d'antennes imprimé directement sur le silicium.
+De plus, le pin 12 (gpio 18) de la raspberry est
+utilisé par les deux cartes : il s'agit d'une sortie audio pour la
+Hifiberry, et d'une sortie PPS (```pulse per second```) pour le GPS. Il faut
+donc rediriger l'un des pins d'une des cartes pour éviter un conflit.
+Comme le pin 12 est un pin spécialisé pour les opérations temporelles
+complexes, on doit rediriger le signal vers le seul pin de la raspberry
+également capable de traiter ces opérations : le pin 33 (gpio 13).
+
+Il est à noter qu'une antenne adaptées est nécessaire pour LoRa (antenne
+868,1 MHz), mais pas pour le GPS. En effet, la puce GPS dispose d'un
+réseau d'antennes imprimé directement sur le silicium.
 
 Par la suite, l'installation logicielle se fait en deux étapes :
 
 -   l'installation du GPS,
 -   l'installation de LoRa.
 
-####3.1 - Installation du GPS
+
+#### 3.1 - Installation du GPS
 
 On commence par donner l'instruction à l'OS d'installer les drivers qui
 nous intéressent. Pour cela, on écrit les lignes :
+
 ```
 dtparam=spi=on
 
@@ -231,8 +258,9 @@ enable_uart=1
 
 force_turbo=1
 ```
-Dans Le fichier ```/boot/config.txt``` (```sudo nano /boot/config.txt```). Puis
-éditer le fichier ```/boot/cmdline.txt``` (```sudo nano /boot/cmdline.txt```)
+
+Dans Le fichier ```/boot/config.txt (sudo nano /boot/config.txt). ```Puis
+éditer le fichier ```/boot/cmdline.txt ```(```sudo nano /boot/cmdline.txt```)
 et remplacer l'ensemble de son contenu par :
 ```
 dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4
@@ -244,9 +272,10 @@ dans la terminal la commande
 ```
 sudo systemctl disable hciuart
 ```
+
 Puis éditer le fichier de configuration correspondant (```sudo nano
 /lib/systemd/system/hciuart.service```) en remplaçant la ligne
-*After=dev-serial1.device* par ```After=dev-ttyS0.device```. Sauver et
+```After=dev-serial1.device* par *After=dev-ttyS0.device```. Sauver et
 quitter.
 
 Enfin, mettre-à-jour la raspberry et la redémarrer avec les commandes
@@ -264,10 +293,11 @@ Le module GPS devrait alors envoyer des données à la carte raspberry PI
 sur la liaison série. Il est possible de visualiser les données GPS
 brutes envoyées avec la commande ```sudo cat /dev/ttyS0```.
 
-Attention, lors d'une première utilisation, un GPS peut mettre plusieurs
+
+**Attention, lors d'une première utilisation, un GPS peut mettre plusieurs
 minutes avant de connaître sa position, la communication avec les
 satellites est très lente. Il ne faut pas s'inquiéter si les données GPS
-n'ont pas l'aspect présenté dans la figure 6 dés le début.
+n'ont pas l'aspect présenté dans la figure 6 dés le début.**
 
 Désactiver le service tty (text only) de la raspberry.
 
@@ -299,9 +329,9 @@ commande :
 
 ```
 sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock
-
-On peut visualiser les données GPS traitées avec la commande *cgps -s.*
 ```
+
+On peut visualiser les données GPS traitées avec la commande ```cgps -s```.
 
 Si après quelques minutes **en vu du ciel** cette interface affiche
 toujours « NO FIX », cela signifie qu'il y a potentiellement un problème
@@ -318,7 +348,7 @@ sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock
 ```
 
 Si cela ne résout toujours pas le problème, modifier le fichier de
-configuration de gpsd (sudo nano /etc/default/gpsd) et remplaçant
+configuration de gpsd (```sudo nano /etc/default/gpsd```) et remplaçant
 l'ensemble du fichier par :
 
 ```
@@ -333,7 +363,39 @@ USBAUTO="false"
 GPSD_SOCKET="/var/run/gpsd.sock"
 ```
 
-####3.2 -- Installation de LoRa
+On veut maintenant synchroniser la raspberry sur les fronts montants du
+signal PPS du GPS (celui qui a été redirigé, cf. ). Pour cela, ajouter
+la ligne suivant au fichier de configuration (```sudo nano
+/boot/config.txt```).
+
+```
+dtoverlay=pps-gpio,gpiopin=13
+```
+
+Puis, ajouter la ligne suivante au fichier où sont listés les
+modules activés au démarrage de la raspberry (```sudo nano /etc/modules).
+
+```
+pps-gpio
+```
+
+Enfin, redémarrer la carte. Pour vérifier que ces modifications
+fonctionnent correctement, exécuter les commandes suivantes :
+
+```
+sudo apt-get install pps-tools
+
+lsmod | grep pps
+```
+
+La seconde commande devrait afficher quelque chose à l'écran. Si c'est
+bien le cas, exécuter la commande suivante :
+
+```sudo ppstest /dev/pps0```
+
+
+
+#### 3.2 -- Installation de LoRa
 
 Nous allons maintenant installer les drivers pour faire fonctionner LoRa
 sur la carte. Pour commencer, installer wiringpi, une librairie écrite
@@ -357,11 +419,7 @@ git clone https://github.com/WiringPi/WiringPi
 Il faut maintenant installer cette librairie. Pour cela, on suit les
 instructions du fichier INSTALL disponible sur github
 ([lien](https://github.com/WiringPi/WiringPi/blob/master/INSTALL#L4)).
-En bref, les deux commandes suivantes devraient suffire.Ces programmes
-utilisent des librairies externes qu'il faut installer. La première
-librairie est bc qui permet d'effectuer des opérations mathématiques sur
-des nombres à virgule flottante, et la seconde librairie est ffmpeg qui
-permet la manipulation
+En bref, les deux commandes suivantes devraient suffire.
 
 ```
 cd WiringPi/
@@ -369,8 +427,8 @@ cd WiringPi/
 ./build
 ```
 
-On peut maintenant télécharger les programmes qu'on va utiliser pour
-communiquer avec le protocole LoRa.
+Enfin, on peut tester le bon fonctionnement de LoRa. On télécharge les
+programmes qu'on va utiliser pour communiquer avec le protocole LoRa.
 
 ```
 cd
@@ -390,12 +448,10 @@ cd rpi-lora-tranceiver-master/dragino_lora_app
 make
 ```
 
-\
-Enfin, on peut tester le bon fonctionnement de LoRa. En utilisant deux
-raspberry PI configurées de la même manière, on peut exécuter sur l'une
-le programme obtenu en la configurant en émetteur :
-
+En utilisant deux raspberry PI configurées de la même manière, on peut
+exécuter sur l'une le programme obtenu en la configurant en émetteur :
 ```
+
 cd ~/rpi-lora-tranceiver-master/dragino_lora_app
 
 ./dragino_lora_app sender
@@ -407,16 +463,16 @@ peut alors configurer l'autre carte en récepteur :
 ```
 cd ~/rpi-lora-tranceiver-master/dragino_lora_app
 
-./dragino\_lora\_app receiver
+./dragino_lora_app receiver
 ```
 
 La carte réceptrice doit alors recevoir le message « HELLO » envoyé par
 l'autre carte. C'est ce programme légèrement modifié qui est utilisé par
 la suite pour la partie logicielle de ce projet.
 
-####3.3 -- Installation des logicielles
+### 3.3 -- Installation des logicielles
 
-Cette partie propose de télécharger les programmes développées pour ce
+Cette partie propose de télécharger les programmes développés pour ce
 projet. Ils sont rudimentaires et ne doivent être utilisés que comme une
 base de travail pour développer des programmes robustes.
 
@@ -441,15 +497,14 @@ librairie est *ffmpeg* qui permet la manipulation de fichiers audio, et
 notamment la conversion entre les différents formats (.mp3, .wav, etc).
 C'est cette librairie qui est également utilisée pour lire les fichiers
 audio.
-
 ```
 sudo apt install bc
 
 sudo apt install ffmpeg
 ```
 
-##V -- Utilisation
-================
+## V -- Utilisation
+==============================
 
 Une fois l'installation terminée, on peut commencer à utiliser ces
 programmes. Pour cela, il faut :
@@ -457,9 +512,9 @@ programmes. Pour cela, il faut :
 -   Brancher un amplificateur et un haut-parleur adapté à la sortie
     audio du HAT Hifiberry
 -   Télécharger les fichiers audios à lire dans le dossier
-    ```~/Sparus/audio ``` de chaque raspberry PI
+    ```~/Sparus/audio``` de chaque raspberry PI
 -   Modifier les paramètres de génération de l'emploi du temps dans le
-    fichier de paramètres (```nano ~/Sparus/param.txt```) de la raspberry
+    fichier de paramètres (```nano \~/Sparus/param.txt```) de la raspberry
     maître :
 
     -   silence (2 valeurs) : durées minimale et maximale en seconde
@@ -474,25 +529,11 @@ programmes. Pour cela, il faut :
     nécessaire. Par défaut cette valeur vaut 84600 secondes, soit 24h.
 
 Enfin, on peut lancer les programmes adaptés sur chaque carte. Commencer
-par utiliser la commande suivante sur toutes les raspberry PI esclave.
+par utiliser la commande suivante sur toutes les raspberry PI esclaves.
 
-```
-sudo ~/Sparus/sparus_slave
-```
+```sudo ~/Sparus/sparus_slave```
+
 Enfin lancer la commande suivante sur la raspberry PI maître.
-```
-sudo ~/Sparus/sparus_master
-```
 
-Il est également possible de paramètrer la raspberry pour que ces scripts 
-soient exécutés au démarrage. Pour cela, utiliser la commande 
-``` sudo crontab -e``` et on ajouter la ligne suivante au fichier texte qui s'ouvre :
+sudo ```~/Sparus/sparus_master```
 
-```
-@reboot /home/pi/Sparus/sparus_master
-```
-ou
-```
-@reboot /home/pi/Sparus/sparus_slave
-```
-Il faut alors allumer tous les esclaves avant d'allumer la raspberry maître.
