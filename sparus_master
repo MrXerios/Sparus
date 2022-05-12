@@ -4,6 +4,10 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
+# Démarrage du GPS et délais d'une minute pour obtenir le signal
+sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock
+sleep 60
+
 # Synchronisation au GPS
 SYNC_CLOCK=$(grep -Eo '[0-9]{1,10}' param.txt | head -5 | tail -1)
 TIME_LAST_SYNC=$(date -d 'now' +%s)
