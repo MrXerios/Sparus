@@ -1,66 +1,28 @@
 #!/bin/bash
 
+# On se place dans le dossier qui contient le script
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
-# Creation du fichier d'emplois du temps schedule file
+# Creation du fichier d'emplois du temps schedule.txt si il n'existe pas déjà
 touch schedule.txt
 
-echo "BEGIN SYNC"
-sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock
+# Synchronisation au GPS
 ./synchro_clock_to_gps
-# Synchronisation avec le maître
-#MASTER_TIME=$(./txrx_once receiver)
-#date +%S.%N -s @$MASTER_TIME
-
-#START_SYNC=$(date +%s.%N)
-#sleep 1
-#./txrx_once sender TOP
-#./txrx_once receiver
-#END_SYNC=$(date +%s.%N)
-
-#echo "SYNC END"
-
-# Temps de propagation entre le maître et l'esclave
-#AIR_TIME=$(echo "($START_SYNC - $END_SYNC) / 2 - 5" | bc -l)
-
-# Temps réel par rapport au maître
-#CURRENT_TIME=$(date +%s.%N)
-#NEW_TIME=$(echo "$MASTER_TIME + ($CURRENT_TIME - $START_SYNC) - $AIR_TIME" | bc -l)
-
-#date +%S.%N -s @$NEW_TIME
-#echo $NEW_TIME
-
-echo "DATE SET, WAITING SCHEDULE"
+TIME_LAST_SYNC=$(date +%s)
 
 while [ 1 ]
 do
-	./txrx_schedule receiver 
+	# Recevoir l'emploi du temps
+	./txrx_schedule receiver
+	
+	# Jouer l'empoi du temps
 	./play_schedule
+	
+	# Resynchronisation si le délais précisé en paramètre est dépassé
 	if [ $((TIME_LAST_SYNC + SYNC_CLOCk)) -lt $(date -d 'now' +%s) ]
 	then
-		echo "BEGIN SYNC"
-
-		# Synchronisation avec le maître
-		MASTER_TIME=$(./txrx_once receiver)
-		sleep 1
-		START_SYNC=$(date +%s.%N)
-		./txrx_once sender TOP
-		./txrx_once receiver
-		END_SYNC=$(date +%s.%N)
-
-		echo "SYNC END"
-
-		# Temps de propagation entre le maître et l'esclave
-		AIR_TIME=$(echo "($START_SYNC - $END_SYNC) / 2 - 5" | bc -l)
-
-		# Temps réel par rapport au maître
-		CURRENT_TIME=$(date +%s.%N)
-		NEW_TIME=$(echo "$MASTER_TIME + ($CURRENT_TIME - $START_SYNC) - $AIR_TIME" | bc -l)
-		date +%S.%N -s @$NEW_TIME
-
-		echo "DATE SET, WAITING SCHEDULE"
-
+		./synchro_clock_to_gps
 		TIME_LAST_SYNC=$(date +%s)
 	fi
 done
