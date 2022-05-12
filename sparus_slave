@@ -7,9 +7,14 @@ cd $SCRIPT_DIR
 # Creation du fichier d'emplois du temps schedule.txt si il n'existe pas déjà
 touch schedule.txt
 
+# Démarrage du GPS et délais d'une minute pour obtenir le signal
+sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock
+sleep 60
+
 # Synchronisation au GPS
+SYNC_CLOCK=$(grep -Eo '[0-9]{1,10}' param.txt | head -5 | tail -1)
+TIME_LAST_SYNC=$(date -d 'now' +%s)
 ./synchro_clock_to_gps
-TIME_LAST_SYNC=$(date +%s)
 
 while [ 1 ]
 do
